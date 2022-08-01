@@ -115,11 +115,12 @@ def wrapper(func, *args, **kwargs):
     def wrapped():
         return func(*args, **kwargs)
     return wrapped
+
 def test_opt(filename,primes,rnd,budget):
     """
     Test the optimal insertion algorithm
     :param filename: the list of filenames
-    :param primes: the prime value chosen to generate s_i values to test
+    :param primes: z value chosen to generate s_i values to test
     :param rnd: the high entropy (random) value generated based on security parameter (e.g.256)
     :param budget: the tolerance on distortion created by watermarking
     :return: Testing...
@@ -134,8 +135,8 @@ def test_opt(filename,primes,rnd,budget):
     '''
     for i in range(len(filename)):
         ch, el,ch_list = wm_insert_optimal(filename[i], rnd, primes, budget)
-        name="chosen_pairs_"+filename[i]
-        wmpair_to_file(ch_list,name)
+        #name="chosen_pairs_"+filename[i]
+        #wmpair_to_file(ch_list,name)
         al.append(ch)
         #t.append(sim)
 
@@ -144,7 +145,7 @@ def test_opt_p(filename,primes,rnd,budget):
     """
     Test the optimal insertion algorithm
     :param filename: the list of filenames
-    :param primes: the prime value chosen to generate s_i values to test
+    :param primes:  z value chosen to generate s_i values to test
     :param rnd: the high entropy (random) value generated based on security parameter (e.g.256)
     :param budget: the tolerance on distortion created by watermarking
     :return: Testing...
@@ -154,11 +155,12 @@ def test_opt_p(filename,primes,rnd,budget):
         ch, el,ch_list = wm_insert_optimal(filename, rnd, primes[i], budget)
         al.append(ch)
     return al
+
 def test_greedy_p(filename,primes,rnd,budget):
     """
     Test the greedy based insertion algorithm
     :param filename: the list of filenames
-    :param primes: the prime value chosen to generate s_i values to test
+    :param primes: z value chosen to generate s_i values to test
     :param rnd: the high entropy (random) value generated based on security parameter (e.g.256)
     :param budget: the tolerance on distortion created by watermarking
     :return: Testing...
@@ -168,25 +170,25 @@ def test_greedy_p(filename,primes,rnd,budget):
        ch,el,ch_list= wm_insert_greedy(filename, rnd, primes[i], budget)
        al.append(ch)
     return al
-def test_random_p(filename,p,rnd,budget):
+def test_random_p(filename,z,rnd,budget):
     """
     Test the insertion algorithm with random choose
     :param filename: the list of filenames
-    :param primes: the prime value chosen to generate s_i values to test
+    :param primes: z value chosen to generate s_i values to test
     :param rnd: the high entropy (random) value generated based on security parameter (e.g.256)
     :param budget: the tolerance on distortion created by watermarking
     :return: Testing...
     """
     al = []
-    for i in range(len(p)):
-        ch, el,ch_list = wm_insert_random(filename, rnd, p[i], budget)
+    for i in range(len(z)):
+        ch, el,ch_list = wm_insert_random(filename, rnd, z[i], budget)
         al.append(ch)
     return al
 def test_greedy(filename,primes,rnd,budget):
     """
     Test the greedy based insertion algorithm
     :param filename: the list of filenames
-    :param primes: the prime value chosen to generate s_i values to test
+    :param primes: z value chosen to generate s_i values to test
     :param rnd: the high entropy (random) value generated based on security parameter (e.g.256)
     :param budget: the tolerance on distortion created by watermarking
     :return: Testing...
@@ -199,33 +201,34 @@ def test_greedy(filename,primes,rnd,budget):
        #t.append(sim)
 
     return al #,t
-def test_random(filename,p,rnd,budget):
+
+def test_random(filename,z,rnd,budget):
     """
     Test the insertion algorithm with random choose
     :param filename: the list of filenames
-    :param primes: the prime value chosen to generate s_i values to test
+    :param primes: z value chosen to generate s_i values to test
     :param rnd: the high entropy (random) value generated based on security parameter (e.g.256)
     :param budget: the tolerance on distortion created by watermarking
     :return: Testing...
     """
     al = []
     '''
-    ch, el, ch_list = wm_insert_random(filename, rnd, p, budget)
+    ch, el, ch_list = wm_insert_random(filename, rnd, z, budget)
     al.append(ch)
     #t=[]
     '''
     for i in range(len(filename)):
-        ch, el,ch_list = wm_insert_random(filename[i], rnd, p, budget)
+        ch, el,ch_list = wm_insert_random(filename[i], rnd, z, budget)
         al.append(ch)
 
       #  t.append(sim)
     return al #,t
-def time_all_gen(func,filename,rnd,p,budget):
+def time_all_gen(func,filename,rnd,z,budget):
     for i in range(len(filename)):
-        wrapped = wrapper(func, filename[i],rnd, p, budget)
+        wrapped = wrapper(func, filename[i],rnd, z, budget)
         x = timeit.timeit(wrapped, number=1)
         print("Generation time for : ",x, " ", filename[i])
-   # wrapped = wrapper(func, filename, rnd, p, budget)
+   # wrapped = wrapper(func, filename, rnd, z, budget)
    # x = timeit.repeat(wrapped, number=1, repeat=10)
     #avg=sum(x)/len(x)
     sum=0
@@ -235,13 +238,13 @@ def time_all_gen(func,filename,rnd,p,budget):
     #x=sum/3
    # print("Running time (in sec) of ",filename," : ",x) #round(x,2))
     return
-def time_all_verify(func,filename,threshold,threshold_ver, chosen_list, rnd, p):
+
+def time_all_verify(func,filename,threshold,threshold_ver, chosen_list, rnd, z):
     for i in range(len(filename)):
-     ch, el, ch_list = wm_insert_optimal(filename[i], rnd, p, budget)
-     wrapped = wrapper(func,filename[i],50,2, ch_list, rnd, p)
+     ch, el, ch_list = wm_insert_optimal(filename[i], rnd, z, budget)
+     wrapped = wrapper(func,filename[i],50,2, ch_list, rnd, z)
      x = timeit.timeit(wrapped, number=1)
-     print("Verify time for : ",x," ",filename[i])
-   # x = timeit.repeat(wrapped, number=1, repeat=10)
+     print("Running time (in sec) of verification ", filename, " : ", x)   # x = timeit.repeat(wrapped, number=1, repeat=10)
     #avg=sum(x)/len(x)
     sum=0
     #for i in range(3):
@@ -250,8 +253,9 @@ def time_all_verify(func,filename,threshold,threshold_ver, chosen_list, rnd, p):
     #x=sum/3
     #print("Running time (in sec) of ",filename," : ",x) #round(x,2))
     #return x
-def time_rep(func,filename,threshold,threshold_ver, items, rnd, p):
-    wrapped = wrapper(func,filename,threshold,threshold_ver, items, rnd, p)
+
+def time_rep(func,filename,threshold,threshold_ver, items, rnd, z):
+    wrapped = wrapper(func,filename,threshold,threshold_ver, items, rnd, z)
     #x = timeit.repeat(wrapped, number=1, repeat=30)
     #avg=x/30
     sum=0
@@ -262,11 +266,12 @@ def time_rep(func,filename,threshold,threshold_ver, items, rnd, p):
     x=sum/30
     print("Running time (in sec) of verification ", filename, " : ", x)  # round(x,2))
     return x
-def test_alpha(filename,p,rnd,budget,name):
+
+def test_alpha(filename,z,rnd,budget,name):
     """
     :param filename: is a list of file names as [file1.txt,file2.txt]
-    :param p: prime chosen to calculate s_i values as s_1=H(rnd||url1||url2) mod p
-    :param rnd: high entropy secret (e.g., 256 bits)
+    :param z: z chosen to calculate s_i values as s_1=H(rnd||token1||token2) mod z
+    :param rnd: a high entropy secret (e.g., 256 bits)
     :param budget: distortion tolerance on the data after watermarked
     :return: a plot
     """
@@ -275,18 +280,16 @@ def test_alpha(filename,p,rnd,budget,name):
     t=[]
     print("-------TESTING BASED ON ALPHA VALUES-------\n")
 
-
-
-    y1 = test_opt(filename, p, rnd, budget)
+    y1 = test_opt(filename, z, rnd, budget)
     print('The result of optimal : ', y1)
 
-    y2 = test_greedy(filename, p, rnd, budget)
+    y2 = test_greedy(filename, z, rnd, budget)
     print('The result of greedy  : ', y2)
 
-    y3 = test_random(filename, p, rnd, budget)
+    y3 = test_random(filename, z, rnd, budget)
     print('The result of random  : ', y3)
 
-   # y1 = test_random(filename, p, rnd, budget)
+   # y1 = test_random(filename, z, rnd, budget)
     #print('The result of optimal : ', y1)
 
 
@@ -303,17 +306,18 @@ def test_alpha(filename,p,rnd,budget,name):
     draw_plot_multiple(x, 'Skewness parameter (\u03B1)', y,'Chosen pairs', ['Optimal','Greedy','Random'], nam)
    # namx='Cosine similarity vs Alpha : '+name
     #draw_plot_multiple(x, 'alpha', t, 'Cosine Similarity', ['Optimal', 'Greedy', 'Random'], namx)
-def test_budgets(filename,p,rnd,budget):
+
+def test_budgets(filename,z,rnd,budget):
     x=[[2,5,10,15],[2,5,10,15],[2,5,10,15]]
     y1 = []
     y2 = []
     y3 = []
     for i in range(len(budget)):
-        ch1, el1,cho1 = wm_insert_optimal(filename[2], rnd, p, budget[i])
+        ch1, el1,cho1 = wm_insert_optimal(filename[2], rnd, z, budget[i])
         y1.append(ch1)
-        ch2, el2,cho2 = wm_insert_greedy(filename[2], rnd, p, budget[i])
+        ch2, el2,cho2 = wm_insert_greedy(filename[2], rnd, z, budget[i])
         y2.append(ch2)
-        ch3, el3,cho3 = wm_insert_random(filename[2], rnd, p, budget[i])
+        ch3, el3,cho3 = wm_insert_random(filename[2], rnd, z, budget[i])
         y3.append(ch3)
 
     y = []
@@ -321,11 +325,12 @@ def test_budgets(filename,p,rnd,budget):
     y.append(y2)
     y.append(y3)
     draw_plot_multiple(x, 'Budget (b)', y, 'Chosen pairs', ['Optimal', 'Greedy','Random'], 'Number of chosen Pairs vs. Budgets')
-def test_size(filename,p,rnd,budget):
+
+def test_size(filename,z,rnd,budget):
     """
     :param filename: is a list of file names as [file1.txt,file2.txt]
-    :param p: prime chosen to calculate s_i values as s_1=H(rnd||url1||url2) mod p
-    :param rnd: high entropy secret (e.g., 256 bits)
+    :param z: z chosen to calculate s_i values as s_1=H(rnd||token1||token2) mod z
+    :param rnd: a high entropy secret (e.g., 256 bits)
     :param budget: distortion tolerance on the data after watermarked
     :return: a plot
     """
@@ -334,13 +339,13 @@ def test_size(filename,p,rnd,budget):
     y = []
     print("-------TESTING BASED ON ALPHA=0.5 with different sizes-------\n")
 
-    y1 = test_opt(filename, p, rnd, budget)
+    y1 = test_opt(filename, z, rnd, budget)
     print('The result of optimal : ', y1)
 
-    y2 = test_greedy(filename, p, rnd, budget)
+    y2 = test_greedy(filename, z, rnd, budget)
     print('The result of greedy  : ', y2)
 
-    y3 = test_random(filename, p, rnd, budget)
+    y3 = test_random(filename, z, rnd, budget)
     print('The result of random  : ', y3)
 
 
@@ -353,26 +358,27 @@ def test_size(filename,p,rnd,budget):
     #print('The result of random  : ', y[2])
 
     draw_plot_multiple(x, 'Size', y,'Chosen pairs', ['Optimal','Greedy','Random'], 'Number of chosen Pairs vs Size, alpha=0.5')
-def test_p(filename,p,rnd,budget):
+
+def test_p(filename,z,rnd,budget):
     """
         :param filename: is a list of file names as [file1.txt,file2.txt]
-        :param p: prime chosen to calculate s_i values as s_1=H(rnd||url1||url2) mod p
+        :param z: z chosen to calculate s_i values as s_1=H(rnd||token1||token2) mod z
         :param rnd: high entropy secret (e.g., 256 bits)
         :param budget: distortion tolerance on the data after watermarked
         :return: a plot
         """
     # x = [[100, 300, 500, 1000, 10000], [100, 300, 500, 1000, 10000],[100, 300, 500, 1000, 10000]]
-    x = [p, p, p]
+    x = [z, z, z]
     y = []
     print("-------TESTING BASED ON ALPHA=%s -------\n"%(filename))
 
-    y1 = test_opt_p(filename, p, rnd, budget)
+    y1 = test_opt_p(filename, z, rnd, budget)
     print('The result of optimal : ', y1)
 
-    y2 = test_greedy_p(filename, p, rnd, budget)
+    y2 = test_greedy_p(filename, z, rnd, budget)
     print('The result of greedy  : ', y2)
 
-    y3 = test_random_p(filename, p, rnd, budget)
+    y3 = test_random_p(filename, z, rnd, budget)
     print('The result of random  : ', y3)
 
     y.append(y1)
@@ -383,7 +389,8 @@ def test_p(filename,p,rnd,budget):
     # print('The result of random  : ', y[2])
 
     draw_plot_multiple(x, 'Modulo value (z)', y, 'Chosen pairs', ['Optimal', 'Greedy', 'Random'],
-                       'Number of chosen Pairs vs p value ')
+                       'Number of chosen Pairs vs z value ')
+
 def draw_plot_multiple(x,xname,y,yname,linename,plotname):
     """
     Make sure that the sizes of x and y are the same.
@@ -422,11 +429,11 @@ def draw_plot_multiple(x,xname,y,yname,linename,plotname):
     # function to show the plot
     plt.show()
     #x, np.log(x), 'g'
-def draw_exec(files,x,xname,rnd,p,budget):
+def draw_exec(files,x,xname,rnd,z,budget):
     t=[]
     for i in range(len(files)):
         # print(files[i])
-        t.append(time_all_gen(wm_insert_greedy, files[i], rnd, p, budget))
+        t.append(time_all_gen(wm_insert_greedy, files[i], rnd, z, budget))
     m = []
     m.append(t)
     draw_plot_multiple(x, xname, m, 'Time (sec)', ['line-1'], 'Total Execution-time')
@@ -447,10 +454,10 @@ plotname='Number of chosen Pairs vs Alpha'
 #draw_plot_multiple(x,xname,y,yname,linename,plotname)
 
 #primes=[2671]
-#p = random.choice(primes)
+#z = random.choice(primes)
 #rnd = secrets.randbits(256)
 rnd=94150602964623730173619679764343462318710907258738770672733287463602813493207
-p=131 #131 #1031 #1001#631#231 #2671 #3911
+z=131 #131 #1031 #1001#631#231 #2671 #3911
 pr=[10,33,393,631,1031,2671] #,2671,5001]
 budget=2
 x=[[0,0.2,0.5,0.7,0.9,1],[0,0.2,0.5,0.7,0.9,1]]
@@ -464,7 +471,7 @@ eyewndr=["eyewndr.txt"]
 files_new_1M=["new_s_0_05_1M.txt","new_s_0_2_1M.txt","new_s_0_5_1M.txt","new_s_0_7_1M.txt","new_s_0_9_1M.txt","new_s_1_1M.txt"]
 files_new_10M=["s_0_05_1k_10M.txt","s_0_2_1k_10M.txt","s_0_5_1k_10M.txt","s_0_7_1k_10M.txt","s_0_9_1k_10M.txt","s_1_1k_10M.txt"]
 files_alpha_0_5=["s_0_5_100.txt","s_0_5_300.txt","s_0_5_500.txt","s_0_5_1000.txt"] #,"s_0_5_10K.txt"]
-#print("rnd: ",rnd, " prime: ",p)
+#print("rnd: ",rnd, " z: ",z)
 #print("new_s_0_7.txt : "+ str(total("new_s_0_7.txt")))
 #test_budgets(files_new_1M,33,rnd,[2,5,10,15])
 #for i in range(len(eyewndr)):
@@ -474,83 +481,83 @@ files_alpha_0_5=["s_0_5_100.txt","s_0_5_300.txt","s_0_5_500.txt","s_0_5_1000.txt
 real_data=["hist_taxi_id.txt","hist_adult_age.txt","hist_adult_age_workclass.txt"]
 nf10K='N=10K, S=1M'
 name1M='N=1K, S=1M'
-#test_alpha(files_new_10K,p,rnd,budget,nf10K)
+#test_alpha(files_new_10K,z,rnd,budget,nf10K)
 #list_o,list_ow=read_from_file("hist_taxi_id.txt")
 #print(list_ow)
-#r_opt=test_opt(real_data,p,rnd,2)
+#r_opt=test_opt(real_data,z,rnd,2)
 #print("chosen: ",r_opt)
-#r_rnd=test_random(real_data,p,rnd,2)
-#r_rnd=test_greedy(real_data,p,rnd,2)
-#time_all_gen(wm_insert,real_data,rnd,p,2)
-time_all_verify(wm_verify,real_data,50,20,[],rnd,p)
-r_rnd=test_random(real_data,p,rnd,2)
-r_rnd=test_greedy(real_data,p,rnd,2)
+#r_rnd=test_random(real_data,z,rnd,2)
+#r_rnd=test_greedy(real_data,z,rnd,2)
+#time_all_gen(wm_insert,real_data,rnd,z,2)
+time_all_verify(wm_verify,real_data,50,20,[],rnd,z)
+r_rnd=test_random(real_data,z,rnd,2)
+r_rnd=test_greedy(real_data,z,rnd,2)
 
 '''
 
 r_random=[]
 for i in range(10):
-   r_random.append(test_random(real_data[1],p,rnd,2)[0])
+   r_random.append(test_random(real_data[1],z,rnd,2)[0])
 print("Mean random: ",statistics.mean((r_random)))
 '''
 #print("Optimal: ",r_opt,"Random: ",r_rnd," Greedy: ",r_greedy)
 #y=[]
-#y1=round(time_all(wm_insert_greedy,'new_s_0_5_1M.txt',rnd,p,2),3)
+#y1=round(time_all(wm_insert_greedy,'new_s_0_5_1M.txt',rnd,z,2),3)
 #y.append(y1)
-#y2=round(time_all(wm_insert_random,'new_s_0_5_1M.txt',rnd,p,2),3)
+#y2=round(time_all(wm_insert_random,'new_s_0_5_1M.txt',rnd,z,2),3)
 #y.append(y2)
-#y3=round(time_all(wm_insert,'new_s_0_5_1M.txt',rnd,p,2),3)
+#y3=round(time_all(wm_insert,'new_s_0_5_1M.txt',rnd,z,2),3)
 #y.append(y3)
 #print(y)
 #wm_insert("new_s_0_5_1M.txt")
 #test_p("new_s_0_7_1M.txt",pr,rnd,2) #new_s_0_7_1M.txt
-#------test_opt(files_new_1M,p,rnd,budget)
+#------test_opt(files_new_1M,z,rnd,budget)
 #test_p("s_0_7_1k_10M.txt",pr,rnd,2)
 #test_p("new_s_0_7_10K.txt",pr,rnd,2)
 #draw_exec(files_new_1M,2)
-#test_random(files_new_10K,p,rnd,budget)
-#test_greedy(files_new_10K,p,rnd,budget)
+#test_random(files_new_10K,z,rnd,budget)
+#test_greedy(files_new_10K,z,rnd,budget)
 #test_size(files_alpha_0_5,1031,rnd,budget)
 #name10K='N=1K, S=10K'
-#test_alpha(files_1K_10K,p,rnd,budget,name10K)
+#test_alpha(files_1K_10K,z,rnd,budget,name10K)
 #name100K='N=1K, S=100K'
-#test_alpha(files_1K_100K,p,rnd,budget,name100K)
+#test_alpha(files_1K_100K,z,rnd,budget,name100K)
 
-#test_alpha(files_new_1M,p,rnd,budget,name1M)
+#test_alpha(files_new_1M,z,rnd,budget,name1M)
 #name10M='N=1K, S=10M'
-#test_alpha(files_new_10M,p,rnd,budget,name10M)
-#wm_insert_random(files[3],rnd,p,2)
-#wm_insert_greedy("sample_0_5_1K.txt",rnd,p,2)
-#test_budgets(files,p,rnd,[2,5,10,15])
-#al=test_random(eyewndr,p,rnd,budget)
+#test_alpha(files_new_10M,z,rnd,budget,name10M)
+#wm_insert_random(files[3],rnd,z,2)
+#wm_insert_greedy("sample_0_5_1K.txt",rnd,z,2)
+#test_budgets(files,z,rnd,[2,5,10,15])
+#al=test_random(eyewndr,z,rnd,budget)
 #print(al)
-#test_opt(files,p,rnd,budget)
-#wm_insert("sample_alpha_0_7.txt",rnd,p,2)
+#test_opt(files,z,rnd,budget)
+#wm_insert("sample_alpha_0_7.txt",rnd,z,2)
 #print("Greedy")
-#wm_insert_greedy(eyewndr[0],rnd,p,2)
-#wm_insert_greedy(eyewndr[0],rnd,p,1)
-#wm_insert_greedy(eyewndr[0],rnd,p,0.01)
+#wm_insert_greedy(eyewndr[0],rnd,z,2)
+#wm_insert_greedy(eyewndr[0],rnd,z,1)
+#wm_insert_greedy(eyewndr[0],rnd,z,0.01)
 
 #wm_insert("sample_alpha_4.txt", primes, 2)
-#y1=time_all(wm_insert,"eyewndr.txt", rnd,p,2)
-#y2=time_all(wm_insert_greedy,"eyewndr.txt", rnd,p,2)
-#y3=time_all(wm_insert_random,"eyewndr.txt", rnd,p,2)
+#y1=time_all(wm_insert,"eyewndr.txt", rnd,z,2)
+#y2=time_all(wm_insert_greedy,"eyewndr.txt", rnd,z,2)
+#y3=time_all(wm_insert_random,"eyewndr.txt", rnd,z,2)
 
-#ch,el,chosen_list=wm_insert("new_s_0_5_1M.txt",rnd,p,2)
+#ch,el,chosen_list=wm_insert("new_s_0_5_1M.txt",rnd,z,2)
 #destroy_atck("WM_new_s_0_5_1M.txt")
 #time_rep(wm_verify,"WM_new_s_0_5_1M.txt",50,2,chosen_list,rnd,p)
-#ch,el,chosen_list=wm_insert("eyewndr.txt",rnd,p,2)
+#ch,el,chosen_list=wm_insert("eyewndr.txt",rnd,z,2)
 #time_rep(wm_verify,"WM_eyewndr.txt",50,2,chosen_list,rnd,p)
 
 #result,verified=wm_verify("WM_eyewndr.txt",50,2,chosen_list,rnd,p)
 
-#y1=time_all(wm_insert,"new_s_0_5_1M.txt", rnd,p,2)
-#y2=time_all(wm_insert_greedy,"new_s_0_5_1M.txt", rnd,p,2)
-#y3=time_all(wm_insert_random,"new_s_0_5_1M.txt", rnd,p,2)
+#y1=time_all(wm_insert,"new_s_0_5_1M.txt", rnd,z,2)
+#y2=time_all(wm_insert_greedy,"new_s_0_5_1M.txt", rnd,z,2)
+#y3=time_all(wm_insert_random,"new_s_0_5_1M.txt", rnd,z,2)
 
 #draw_plot_multiple(x,xname,m,'execution time',linename,'execution-time')
 
-#draw_exec(files,x,xname,rnd,p,2)
+#draw_exec(files,x,xname,rnd,z,2)
 
 #x1 = [0,0.2,0.5,0.7,0.9,1]
 #y1 = [136, 147, 135, 130, 130, 127]
