@@ -1,6 +1,8 @@
 from methods import *
 import hashlib
 import math
+import random
+
 def wm_insert_random(filename, rnd, prim, budget):
     chosen_el = []
     list_o, list_wm = read_from_file(filename)
