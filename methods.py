@@ -6,7 +6,8 @@ import math
 import statistics
 import secrets
 import hashlib
-
+import networkx as nx
+import matplotlib.pyplot as plt
 class token:
     def __init__(self, token_name, freq):
         self.token_name = token_name
@@ -112,7 +113,7 @@ def wmpair_to_file(pairs,filename):
     '''
     :param pairs: chosen pairs for watermarking which will be stored a secret
     :param filename: filename to save the chosen pairs as
-    :return: cceates a .txt file to save secret chosen pairs needed for verification
+    :return: creates a .txt file to save secret chosen pairs needed for verification
     '''
     output = open(filename, "w")
     for element in pairs:
@@ -122,7 +123,7 @@ def wmpair_to_file(pairs,filename):
 
 def histogram_gen(filename,groupname):
     '''
-    :param filename: Dataset to generate histogram from [.csv]
+    :param filename: Dataset to generate histogram from [.csv, .txt, etc.]
     :param groupname: Token definition as a list ['url',...] ['age','gender']
     :return: Saves the histogram to a txt file where the frequencies are sorted in descending order.
     '''
@@ -214,6 +215,37 @@ def check_sim(list_o, list_w, sim):
         return True
     else:
         return False
+
+''' ***********METHODS NEEDED FOR OPTIMAL FreqyWM********'''
+def create_graph(el_items, max):
+    G = nx.Graph()
+    for i in range(len(el_items)):
+        # for j in range(len(el_items)):
+        G.add_edge(el_items[i][0].get_name(), el_items[i][1].get_name(), weight=max - el_items[i][2])
+    val = [G.__sizeof__()]
+    for i in range(len(val)):
+        val[i] = 1
+    return G, val
+
+#maximum weight  matching result on graph G
+def mwm(G):
+    mwm_matching=nx.max_weight_matching(G,maxcardinality=False)
+    return mwm_matching
+
+def create_list(mwm_match,el_item,max):
+    list_mwm=[]
+    result=[]
+    for e in mwm_match:
+       list_mwm.append([e[0],e[1]])
+
+    #print(list_mwm[0])
+    for i in range(len(el_item)):
+        for j in range(len(list_mwm)):
+            if (el_item[i][0].get_name()==list_mwm[j][0] or el_item[i][0].get_name()==list_mwm[j][1]) and (el_item[i][1].get_name()==list_mwm[j][0] or el_item[i][1].get_name()==list_mwm[j][1]):
+                result.append(el_item[i])
+                break
+
+    return result
 
 ''' ***********METHODS NEEDED FOR OBTWM********'''
 def obtwm_to_file(list_w,filename):
