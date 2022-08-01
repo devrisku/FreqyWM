@@ -6,7 +6,7 @@ import random
 def wm_insert_optimal(filename, rnd, prim, budget):
     # url_list=get_list(list_o)
     chosen_list = []
-    list_o = read_from_file(filename)
+    list_o = read_from_file("wmfiles/"+filename)
     list_w = limit_cal(list_o)
     # All elligible items (url) pairs
     el_item = []
@@ -73,7 +73,7 @@ def wm_insert_optimal(filename, rnd, prim, budget):
     # K=knapSack()
     # list_wt=update(list_w,K,s)
     name = filename.split('.')
-    wm_to_file(list_w, name[0] + '_optimal.txt')
+    wm_to_file(list_w, "wmfiles/"+name[0] + '_optimal.txt')
     #wmpair_to_file(chosen_all, name[0] + '_optimal_pairs.txt')
     # return list_wt,el_item, rnd
     return len(mwm_match),len(el_item), chosen_all #,100 #, rnd
@@ -81,7 +81,7 @@ def wm_insert_optimal(filename, rnd, prim, budget):
 
 def wm_insert_random(filename, rnd, prim, budget):
     chosen_el = []
-    list_o = read_from_file(filename)
+    list_o = read_from_file("wmfiles/"+filename)
     list_wm = limit_cal(list_o)
     #list_o, list_wm = read_from_file(filename)
     wm_list=list_o
@@ -155,7 +155,7 @@ def wm_insert_random(filename, rnd, prim, budget):
             #h1,h2=divide(wm_list[indu1],wm_list[indu2],)
     sim=cosine_simil(list_o,list_wm)
     name = filename.split('.')
-    wm_to_file(list_w, name[0] + '_random.txt')
+    wm_to_file(list_w,"wmfiles/"+ name[0] + '_random.txt')
     print("-----Random-----")
     print('Elligible number of pairs: ',len(el_item))
     print('Chosen number of pairs   : ', len(chosen_el))
@@ -164,7 +164,7 @@ def wm_insert_random(filename, rnd, prim, budget):
     return len(chosen_el),len(el_item),chosen_el #, sim
 
 def wm_insert_greedy(filename, rnd, z, budget):
-    list_o=read_from_file(filename)
+    list_o=read_from_file("wmfiles/"+filename)
     list_w=limit_cal(list_o)
     # All eligible token pairs
     el_item = []
@@ -212,7 +212,7 @@ def wm_insert_greedy(filename, rnd, z, budget):
     #print('chosen el: ',len(chosen_el))
     sim = cosine_simil(list_o, list_w)
     name=filename.split('.')
-    wm_to_file(list_w,name[0]+'_greedy.txt')
+    wm_to_file(list_w,"wmfiles/"+name[0]+'_greedy.txt')
    # wmpair_to_file(chosen_el,name[0]+'_greedy_pairs.txt')
     print("-----FreqyWM Greedy-----")
     print('Eligible # of pairs: ', len(el_item))

@@ -184,7 +184,7 @@ def test():
     z = 1031
     budget = 2
 
-    ch, el, chosen_list = wm_insert_optimal("wmfiles/new_s_0_5_1M.txt", rnd, z, budget)
+    ch, el, chosen_list = wm_insert_optimal("new_s_0_5_1M.txt", rnd, z, budget)
 
     y=[]
     y1=[]
@@ -193,13 +193,13 @@ def test():
     y4=[]
 
     for i in range(len(x)):
-         result1, verified1 = wm_verify("new_s_0_7_1M.txt", 50, x[i], chosen_list, rnd, z)
+         result1, verified1 = wm_verify("wmfiles/new_s_0_7_1M.txt", 50, x[i], chosen_list, rnd, z)
          y1.append(verified1)
-         result2, verified2 = wm_verify("cntrl_WM_new_s_0_5_1M.txt", 50, x[i], chosen_list, rnd, z)
+         result2, verified2 = wm_verify("wmfiles/cntrl_WM_new_s_0_5_1M.txt", 50, x[i], chosen_list, rnd, z)
          y2.append(verified2)
-         result3, verified3 = wm_verify("WM_new_s_0_5_1M.txt", 50, x[i], chosen_list, rnd, z)
+         result3, verified3 = wm_verify("wmfiles/WM_new_s_0_5_1M.txt", 50, x[i], chosen_list, rnd, z)
          y3.append(verified3)
-         result4, verified4 = wm_verify("1_bnd_WM_new_s_0_5_1M.txt", 50, x[i], chosen_list, rnd, z)
+         result4, verified4 = wm_verify("wmfiles/1_bnd_WM_new_s_0_5_1M.txt", 50, x[i], chosen_list, rnd, z)
          y4.append(verified4)
 
 
@@ -219,13 +219,14 @@ def destroy_percentage_total(filename,perc):
     :param perc: is a percentage which refers to percentage of data change (e.g., 10%)
     :return: new file with 10% changes
     '''
-    list_o, list_w = read_from_file(filename)
+    list_o = read_from_file("wmfiles/"+filename)
+    list_w = limit_cal(list_o)
     list_temp=list_w
     #change=math.ceil(len(list_w)*(perc/100))
     #ch=[change]
     #ch=np.zeros(change)
     pick=[]
-    count=0
+    #count=0
     for i in range(len(list_w)):
         coin=random.randint(0,1)
 
@@ -243,11 +244,12 @@ def destroy_percentage_total(filename,perc):
         list_temp[i].set_lim_down(down + x)
         if i < (len(list_w) - 1):
             list_temp[i+ 1].set_lim_up(list_temp[i + 1].get_up() + x)
+            #count=count+1
 
-    wm_to_file(list_temp,str(perc)+"_total_"+filename)
+    wm_to_file(list_temp,"wmfiles/"+str(perc)+"_total_"+filename)
     sim=cosine_simil(list_o,list_temp)
     print("------Total attack-----\n")
-    print("similarity: ",sim, " total changes: ", (count*100)/len(list_w))
+    print("similarity: ",sim) #, " total changes: ", (count*100)/len(list_w))
     #print(list_temp)
     return list_temp,sim
 
@@ -257,7 +259,8 @@ def destroy_percentage(filename,perc):
     :param perc: is a percentage which refers to percentage of data change (e.g., 10%)
     :return: new file with 10% changes
     '''
-    list_o, list_w = read_from_file(filename)
+    list_o = read_from_file("wmfiles/"+filename)
+    list_w = limit_cal(list_o)
     list_temp=list_w
     change=math.ceil(len(list_w)*(perc/100))
     #ch=[change]
@@ -289,7 +292,7 @@ def destroy_percentage(filename,perc):
         if x < (len(list_w) - 1):
             list_temp[x + 1].set_lim_up(list_temp[x + 1].get_up() + ch[i])
 
-    wm_to_file(list_temp,str(perc)+"_uncntrl_"+filename)
+    wm_to_file(list_temp,"wmfiles/"+str(perc)+"_uncntrl_"+filename)
     sim=cosine_simil(list_o,list_temp)
     print("------UNCONTROLLED Attack-----\n")
     print("similarity: ",sim, " total changes: ", (count*100)/len(list_w))
@@ -303,7 +306,8 @@ def destroy_atck(filename):
     A random value between limits (random integer \in [lim_down,lim_up]) of the item (url) is chosen
     :return:
     '''
-    list_o,list_w=read_from_file(filename)
+    list_o = read_from_file(filename)
+    list_w = limit_cal(list_o)
     #list_att=[len(list_w)]
     list_temp = list_w
     alpha=[]
@@ -324,7 +328,7 @@ def destroy_atck(filename):
           list_temp[i+1].set_lim_up(list_temp[i+1].get_up() + a)
 
         alpha.append(a)
-    wm_to_file(list_temp,"cntrl_"+filename)
+    wm_to_file(list_temp,"wmfiles/"+"cntrl_"+filename)
     sim=cosine_simil(list_o,list_temp)
     print("------CONTROLLED Attack-----\n")
     print("similarity: ",sim, " total changes: ", (count*100)/len(list_w))
@@ -332,7 +336,8 @@ def destroy_atck(filename):
     return list_temp,sim
 
 def percentage(filename,perc):
-    list_o, list_w = read_from_file(filename)
+    list_o = read_from_file(filename)
+    list_w = limit_cal(list_o)
     list_temp = list_w
     pick = []
     count = 0
@@ -365,7 +370,7 @@ def percentage(filename,perc):
             if i < (len(list_w) - 1):
                list_temp[i + 1].set_lim_up(list_temp[i + 1].get_up() + x)
 
-    wm_to_file(list_temp, str(perc) + "_perc_" + filename)
+    wm_to_file(list_temp,"wmfiles/"+str(perc) + "_perc_" + filename)
     sim = cosine_simil(list_o, list_temp)
     print("------Percentage Attack-----\n")
     print("similarity: ", sim, " total changes: ", (count * 100) / len(list_w))
@@ -379,7 +384,7 @@ def test_destroy(filename,perc,rnd,p,budget,threshold,threshold_ver):
     wm_name="wmfiles/WM_"+filename
     for i in range(len(perc)):
         list_un, simi = destroy_percentage(wm_name, perc[i])
-        atck_filename=str(perc[i])+"_uncntrl_"+wm_name
+        atck_filename="wmfiles/"+str(perc[i])+"_uncntrl_"+wm_name
         result, verified = wm_verify(atck_filename,threshold, threshold_ver, chosen_list, rnd, p)
         y.append(verified)
         x.append(perc[i])
@@ -389,24 +394,18 @@ def test_destroy(filename,perc,rnd,p,budget,threshold,threshold_ver):
 
 def test_percentage_total(rnd,p,percentage):
     wm_bit = [1, 1, 0, 1, 0]
-    ch, el, chosen_list = wm_insert_optimal("wmfiles/new_s_0_5_1M.txt", rnd, p, budget=2)
-    res_obtwm10=[]
+    ch, el, chosen_list = wm_insert_optimal("new_s_0_5_1M.txt", rnd, p, budget=2)
     res_freqy10=[]
-    res_obtwm30 = []
     res_freqy30 = []
-    res_obtwm50 = []
     res_freqy50 = []
-    res_obtwm60 = []
     res_freqy60 = []
-    res_obtwm80 = []
     res_freqy80 = []
-    res_obtwm90 = []
     res_freqy90 = []
 
 
     for j in range(100):
        for i in range(len(percentage)):
-           destroy_percentage_total("wmfiles/WM_new_s_0_5_1M.txt",percentage[i])
+           destroy_percentage_total("WM_new_s_0_5_1M.txt",percentage[i])
 
        result, verified = wm_verify("wmfiles/10_total_WM_new_s_0_5_1M.txt", 50, 4, chosen_list, rnd, p)
        res_freqy10.append(verified)
@@ -424,7 +423,6 @@ def test_percentage_total(rnd,p,percentage):
 
     mean_freqy=[statistics.mean(res_freqy10),statistics.mean(res_freqy30),statistics.mean(res_freqy50),statistics.mean(res_freqy60),statistics.mean(res_freqy80),statistics.mean(res_freqy90)]
     print("FreqyWM: ",mean_freqy)
-
 
 
 def draw_plot(x, xname, y, yname, plotname):
