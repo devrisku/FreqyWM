@@ -1,5 +1,4 @@
 import statistics
-
 from methods import *
 from freqywm_insert import *
 from freqywm_verify import *
@@ -133,7 +132,7 @@ def test_opt(filename,primes,rnd,budget):
         al.append(ch)
 
 
-    return al 
+    return al
 def test_opt_p(filename,primes,rnd,budget):
     """
     Test the optimal insertion algorithm
