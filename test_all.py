@@ -126,21 +126,14 @@ def test_opt(filename,primes,rnd,budget):
     :return: Testing...
     """
     al = []
- #
-    '''
-    ch, el, ch_list = wm_insert(filename, rnd, primes, budget)
-    name = "chosen_pairs_" + filename
-    wmpair_to_file(ch_list, name)
-    al.append(ch)
-    '''
+
     for i in range(len(filename)):
         ch, el,ch_list = wm_insert_optimal(filename[i], rnd, primes, budget)
-        #name="chosen_pairs_"+filename[i]
-        #wmpair_to_file(ch_list,name)
-        al.append(ch)
-        #t.append(sim)
 
-    return al #,t
+        al.append(ch)
+
+
+    return al 
 def test_opt_p(filename,primes,rnd,budget):
     """
     Test the optimal insertion algorithm
@@ -194,13 +187,13 @@ def test_greedy(filename,primes,rnd,budget):
     :return: Testing...
     """
     al=[]
-    #t=[]
+
     for i in range(len(filename)):
        ch,el,ch_list= wm_insert_greedy(filename[i], rnd, primes, budget)
        al.append(ch)
-       #t.append(sim)
 
-    return al #,t
+
+    return al
 
 def test_random(filename,z,rnd,budget):
     """
@@ -212,31 +205,20 @@ def test_random(filename,z,rnd,budget):
     :return: Testing...
     """
     al = []
-    '''
-    ch, el, ch_list = wm_insert_random(filename, rnd, z, budget)
-    al.append(ch)
-    #t=[]
-    '''
+
     for i in range(len(filename)):
         ch, el,ch_list = wm_insert_random(filename[i], rnd, z, budget)
         al.append(ch)
 
-      #  t.append(sim)
-    return al #,t
+    return al
 def time_all_gen(func,filename,rnd,z,budget):
     for i in range(len(filename)):
         wrapped = wrapper(func, filename[i],rnd, z, budget)
+        #change number for number of iterations to run and remember to take the avg of x.
         x = timeit.timeit(wrapped, number=1)
         print("Generation time for : ",x, " ", filename[i])
-   # wrapped = wrapper(func, filename, rnd, z, budget)
-   # x = timeit.repeat(wrapped, number=1, repeat=10)
-    #avg=sum(x)/len(x)
+
     sum=0
-    #for i in range(3):
-   # x = timeit.timeit(wrapped, number=1)
-    #sum=sum+x
-    #x=sum/3
-   # print("Running time (in sec) of ",filename," : ",x) #round(x,2))
     return
 
 def time_all_verify(func,filename,threshold,threshold_ver, chosen_list, rnd, z):
@@ -407,16 +389,7 @@ def draw_plot_multiple(x,xname,y,yname,linename,plotname):
      plt.rc('font', size=15)
      plt.rc('font', weight='bold')
      plt.plot(x[i], y[i], '--o', linewidth=5, label=linename[i])
-     #if i==0:
-     #    plt.plot(x[i], y[i], '--o', linewidth=5, label=linename[i], color='orange')
-     #else:
-     #    plt.plot(x[i], y[i], '--o', linewidth=5, label=linename[i], color='green')
 
-    #print(x[0])
-   # print(y[0])
-   # plt.plot(x[0], y[0], label=linename[0])
-    #plt.plot(x[1], y[1], label=linename[1])
-   # plt.plot(x[2], y[2], label=linename[2])
     plt.xlabel(xname,fontweight='bold')
     # naming the y axis
     plt.ylabel(yname,fontweight='bold')
@@ -428,7 +401,8 @@ def draw_plot_multiple(x,xname,y,yname,linename,plotname):
 
     # function to show the plot
     plt.show()
-    #x, np.log(x), 'g'
+
+
 def draw_exec(files,x,xname,rnd,z,budget):
     t=[]
     for i in range(len(files)):
@@ -437,14 +411,6 @@ def draw_exec(files,x,xname,rnd,z,budget):
     m = []
     m.append(t)
     draw_plot_multiple(x, xname, m, 'Time (sec)', ['line-1'], 'Total Execution-time')
-
-#draw_plot_multiple([[0.1,0.2,0.5,0.7,0.9]],'alpha',[[112,223,110,450,300]],'elligible items',['test'],'alpha-elligible items')
-
-
-#x = [[1, 2, 3]]
-#y = [[2, 4, 1]]
-# plotting the line 1 points
-
 
 
 xname='alpha'
@@ -461,109 +427,15 @@ z=131 #131 #1031 #1001#631#231 #2671 #3911
 pr=[10,33,393,631,1031,2671] #,2671,5001]
 budget=2
 x=[[0,0.2,0.5,0.7,0.9,1],[0,0.2,0.5,0.7,0.9,1]]
-files=["sample_alpha_0.txt","sample_alpha_0_2.txt","sample_alpha_0_5.txt","sample_alpha_0_7.txt","sample_alpha_0_9.txt","sample_alpha_1_1_p_3.txt"]
-files_sk=["sample_0_5_100.txt","sample_0_5_300.txt","sample_0_5_500.txt","sample_0_5_1000.txt"]#,"sample_0_5_10000.txt"]
-files_1K_10K=["s_0_05_1k_10K.txt","s_0_2_1k_10K.txt","s_0_5_1k_10K.txt","s_0_7_1k_10K.txt","s_0_9_1k_10K.txt","s_1_1k_10K.txt"]
-files_1K_100K=["new_s_0_05.txt","new_s_0_2.txt","new_s_0_5.txt","new_s_0_7.txt","new_s_0_9.txt","new_s_1.txt"]
-
-files_new_10K=["s_0_05_10k_1M.txt","s_0_2_10k_1M.txt","s_0_5_10k_1M.txt","s_0_7_10k_1M.txt","s_0_9_10k_1M.txt","s_1_10k_1M.txt"]
 eyewndr=["eyewndr.txt"]
 files_new_1M=["new_s_0_05_1M.txt","new_s_0_2_1M.txt","new_s_0_5_1M.txt","new_s_0_7_1M.txt","new_s_0_9_1M.txt","new_s_1_1M.txt"]
-files_new_10M=["s_0_05_1k_10M.txt","s_0_2_1k_10M.txt","s_0_5_1k_10M.txt","s_0_7_1k_10M.txt","s_0_9_1k_10M.txt","s_1_1k_10M.txt"]
-files_alpha_0_5=["s_0_5_100.txt","s_0_5_300.txt","s_0_5_500.txt","s_0_5_1000.txt"] #,"s_0_5_10K.txt"]
-#print("rnd: ",rnd, " z: ",z)
-#print("new_s_0_7.txt : "+ str(total("new_s_0_7.txt")))
-#test_budgets(files_new_1M,33,rnd,[2,5,10,15])
-#for i in range(len(eyewndr)):
- #   print(str(total(eyewndr[i])))
-#print("new_s_0_2.txt: "+str(total("s_0_2_1k_10K.txt")))
-#"eyewndr.txt"
+
+
 real_data=["hist_taxi_id.txt","hist_adult_age.txt","hist_adult_age_workclass.txt"]
 nf10K='N=10K, S=1M'
 name1M='N=1K, S=1M'
-#test_alpha(files_new_10K,z,rnd,budget,nf10K)
-#list_o,list_ow=read_from_file("hist_taxi_id.txt")
-#print(list_ow)
-#r_opt=test_opt(real_data,z,rnd,2)
-#print("chosen: ",r_opt)
-#r_rnd=test_random(real_data,z,rnd,2)
-#r_rnd=test_greedy(real_data,z,rnd,2)
-#time_all_gen(wm_insert,real_data,rnd,z,2)
 time_all_verify(wm_verify,real_data,50,20,[],rnd,z)
 r_rnd=test_random(real_data,z,rnd,2)
 r_rnd=test_greedy(real_data,z,rnd,2)
 
-'''
 
-r_random=[]
-for i in range(10):
-   r_random.append(test_random(real_data[1],z,rnd,2)[0])
-print("Mean random: ",statistics.mean((r_random)))
-'''
-#print("Optimal: ",r_opt,"Random: ",r_rnd," Greedy: ",r_greedy)
-#y=[]
-#y1=round(time_all(wm_insert_greedy,'new_s_0_5_1M.txt',rnd,z,2),3)
-#y.append(y1)
-#y2=round(time_all(wm_insert_random,'new_s_0_5_1M.txt',rnd,z,2),3)
-#y.append(y2)
-#y3=round(time_all(wm_insert,'new_s_0_5_1M.txt',rnd,z,2),3)
-#y.append(y3)
-#print(y)
-#wm_insert("new_s_0_5_1M.txt")
-#test_p("new_s_0_7_1M.txt",pr,rnd,2) #new_s_0_7_1M.txt
-#------test_opt(files_new_1M,z,rnd,budget)
-#test_p("s_0_7_1k_10M.txt",pr,rnd,2)
-#test_p("new_s_0_7_10K.txt",pr,rnd,2)
-#draw_exec(files_new_1M,2)
-#test_random(files_new_10K,z,rnd,budget)
-#test_greedy(files_new_10K,z,rnd,budget)
-#test_size(files_alpha_0_5,1031,rnd,budget)
-#name10K='N=1K, S=10K'
-#test_alpha(files_1K_10K,z,rnd,budget,name10K)
-#name100K='N=1K, S=100K'
-#test_alpha(files_1K_100K,z,rnd,budget,name100K)
-
-#test_alpha(files_new_1M,z,rnd,budget,name1M)
-#name10M='N=1K, S=10M'
-#test_alpha(files_new_10M,z,rnd,budget,name10M)
-#wm_insert_random(files[3],rnd,z,2)
-#wm_insert_greedy("sample_0_5_1K.txt",rnd,z,2)
-#test_budgets(files,z,rnd,[2,5,10,15])
-#al=test_random(eyewndr,z,rnd,budget)
-#print(al)
-#test_opt(files,z,rnd,budget)
-#wm_insert("sample_alpha_0_7.txt",rnd,z,2)
-#print("Greedy")
-#wm_insert_greedy(eyewndr[0],rnd,z,2)
-#wm_insert_greedy(eyewndr[0],rnd,z,1)
-#wm_insert_greedy(eyewndr[0],rnd,z,0.01)
-
-#wm_insert("sample_alpha_4.txt", primes, 2)
-#y1=time_all(wm_insert,"eyewndr.txt", rnd,z,2)
-#y2=time_all(wm_insert_greedy,"eyewndr.txt", rnd,z,2)
-#y3=time_all(wm_insert_random,"eyewndr.txt", rnd,z,2)
-
-#ch,el,chosen_list=wm_insert("new_s_0_5_1M.txt",rnd,z,2)
-#destroy_atck("WM_new_s_0_5_1M.txt")
-#time_rep(wm_verify,"WM_new_s_0_5_1M.txt",50,2,chosen_list,rnd,p)
-#ch,el,chosen_list=wm_insert("eyewndr.txt",rnd,z,2)
-#time_rep(wm_verify,"WM_eyewndr.txt",50,2,chosen_list,rnd,p)
-
-#result,verified=wm_verify("WM_eyewndr.txt",50,2,chosen_list,rnd,p)
-
-#y1=time_all(wm_insert,"new_s_0_5_1M.txt", rnd,z,2)
-#y2=time_all(wm_insert_greedy,"new_s_0_5_1M.txt", rnd,z,2)
-#y3=time_all(wm_insert_random,"new_s_0_5_1M.txt", rnd,z,2)
-
-#draw_plot_multiple(x,xname,m,'execution time',linename,'execution-time')
-
-#draw_exec(files,x,xname,rnd,z,2)
-
-#x1 = [0,0.2,0.5,0.7,0.9,1]
-#y1 = [136, 147, 135, 130, 130, 127]
-#y2 = [131, 144, 133, 126, 127, 124]
-#y3 = [135, 143, 134, 128, 129, 123]
-
-#x=[[0.0000002,2,5],[0.0000002,2,5]]
-#y=[[123/134,131/139,131/139],[122/134,133/139,134/139]]
-#draw_plot_multiple(x, 'Budget (b)', y, 'Chosen pairs w.r.t. Optimal', [ 'Greedy', 'Random'],    'Pairs norm by opt vs. Budgets')

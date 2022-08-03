@@ -9,8 +9,9 @@ from freqywm_verify import *
 rnd=94150602964623730173619679764343462318710907258738770672733287463602813493207
 z=131
 budget=2
+
 #TEST of FreqyWM
-print("---------Test FreqyWM----------")
+print("---------Test FreqyWM Verify----------")
 pairs=read_from_pairs("wmfiles/freqy_wm_chosen_pairs_s_0_5_1M.txt")
 res,percentage=wm_verify("wmfiles/freqywm_s_0_5_1M.txt",50,2,pairs,rnd,z)
 print("FreqyWM success rate: ",percentage)
