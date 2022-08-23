@@ -115,11 +115,11 @@ def wrapper(func, *args, **kwargs):
         return func(*args, **kwargs)
     return wrapped
 
-def test_opt(filename,primes,rnd,budget):
+def test_opt(filename,z,rnd,budget):
     """
     Test the optimal insertion algorithm
     :param filename: the list of filenames
-    :param primes: z value chosen to generate s_i values to test
+    :param z: z value chosen to generate s_i values to test
     :param rnd: the high entropy (random) value generated based on security parameter (e.g.256)
     :param budget: the tolerance on distortion created by watermarking
     :return: Testing...
@@ -127,24 +127,21 @@ def test_opt(filename,primes,rnd,budget):
     al = []
 
     for i in range(len(filename)):
-        ch, el,ch_list = wm_insert_optimal(filename[i], rnd, primes, budget)
-
+        ch, el,ch_list = wm_insert_optimal(filename[i], rnd, z, budget)
         al.append(ch)
-
-
     return al
-def test_opt_p(filename,primes,rnd,budget):
+def test_opt_p(filename,z,rnd,budget):
     """
     Test the optimal insertion algorithm
     :param filename: the list of filenames
-    :param primes:  z value chosen to generate s_i values to test
+    :param z:  z value chosen to generate s_i values to test
     :param rnd: the high entropy (random) value generated based on security parameter (e.g.256)
     :param budget: the tolerance on distortion created by watermarking
     :return: Testing...
     """
     al = []
-    for i in range(len(primes)):
-        ch, el,ch_list = wm_insert_optimal(filename, rnd, primes[i], budget)
+    for i in range(len(z)):
+        ch, el,ch_list = wm_insert_optimal(filename, rnd,z[i], budget)
         al.append(ch)
     return al
 
@@ -152,21 +149,21 @@ def test_greedy_p(filename,primes,rnd,budget):
     """
     Test the greedy based insertion algorithm
     :param filename: the list of filenames
-    :param primes: z value chosen to generate s_i values to test
+    :param z: z value chosen to generate s_i values to test
     :param rnd: the high entropy (random) value generated based on security parameter (e.g.256)
     :param budget: the tolerance on distortion created by watermarking
     :return: Testing...
     """
     al=[]
-    for i in range(len(primes)):
-       ch,el,ch_list= wm_insert_greedy(filename, rnd, primes[i], budget)
+    for i in range(len(z)):
+       ch,el,ch_list= wm_insert_greedy(filename, rnd, z[i], budget)
        al.append(ch)
     return al
 def test_random_p(filename,z,rnd,budget):
     """
     Test the insertion algorithm with random choose
     :param filename: the list of filenames
-    :param primes: z value chosen to generate s_i values to test
+    :param z: z value chosen to generate s_i values to test
     :param rnd: the high entropy (random) value generated based on security parameter (e.g.256)
     :param budget: the tolerance on distortion created by watermarking
     :return: Testing...
@@ -176,11 +173,11 @@ def test_random_p(filename,z,rnd,budget):
         ch, el,ch_list = wm_insert_random(filename, rnd, z[i], budget)
         al.append(ch)
     return al
-def test_greedy(filename,primes,rnd,budget):
+def test_greedy(filename,z,rnd,budget):
     """
     Test the greedy based insertion algorithm
     :param filename: the list of filenames
-    :param primes: z value chosen to generate s_i values to test
+    :param z: z value chosen to generate s_i values to test
     :param rnd: the high entropy (random) value generated based on security parameter (e.g.256)
     :param budget: the tolerance on distortion created by watermarking
     :return: Testing...
@@ -188,7 +185,7 @@ def test_greedy(filename,primes,rnd,budget):
     al=[]
 
     for i in range(len(filename)):
-       ch,el,ch_list= wm_insert_greedy(filename[i], rnd, primes, budget)
+       ch,el,ch_list= wm_insert_greedy(filename[i], rnd, z, budget)
        al.append(ch)
 
 
@@ -198,7 +195,7 @@ def test_random(filename,z,rnd,budget):
     """
     Test the insertion algorithm with random choose
     :param filename: the list of filenames
-    :param primes: z value chosen to generate s_i values to test
+    :param z: z value chosen to generate s_i values to test
     :param rnd: the high entropy (random) value generated based on security parameter (e.g.256)
     :param budget: the tolerance on distortion created by watermarking
     :return: Testing...
@@ -206,9 +203,9 @@ def test_random(filename,z,rnd,budget):
     al = []
 
     for i in range(len(filename)):
+        print("iteration: ",i)
         ch, el,ch_list = wm_insert_random(filename[i], rnd, z, budget)
         al.append(ch)
-
     return al
 def time_all_gen(func,filename,rnd,z,budget):
     for i in range(len(filename)):
@@ -401,17 +398,6 @@ def draw_plot_multiple(x,xname,y,yname,linename,plotname):
     # function to show the plot
     plt.show()
 
-
-def draw_exec(files,x,xname,rnd,z,budget):
-    t=[]
-    for i in range(len(files)):
-        # print(files[i])
-        t.append(time_all_gen(wm_insert_greedy, files[i], rnd, z, budget))
-    m = []
-    m.append(t)
-    draw_plot_multiple(x, xname, m, 'Time (sec)', ['line-1'], 'Total Execution-time')
-
-
 xname='alpha'
 yname='Chosen pairs'
 linename=['Optimal','Greedy'] #,'Random']
@@ -428,13 +414,17 @@ budget=2
 x=[[0.05,0.2,0.5,0.7,0.9,1],[0.05,0.2,0.5,0.7,0.9,1]]
 eyewndr=["eyewndr.txt"]
 files_new_1M=["new_s_0_05_1M.txt","new_s_0_2_1M.txt","new_s_0_5_1M.txt","new_s_0_7_1M.txt","new_s_0_9_1M.txt","new_s_1_1M.txt"]
-
-
-real_data=["hist_taxi_id.txt","hist_adult_age.txt","hist_adult_age_workclass.txt"]
+#Note that hist_taxi_id takes longer time. One can omit it.
+real_data=["hist_adult_age.txt","hist_adult_age_workclass.txt","hist_taxi_id.txt"]
 nf10K='N=10K, S=1M'
 name1M='N=1K, S=1M'
-time_all_verify(wm_verify,real_data,50,20,[],rnd,z)
-r_rnd=test_random(real_data,z,rnd,2)
-r_rnd=test_greedy(real_data,z,rnd,2)
+
+#time_all_verify(wm_verify,real_data,50,20,[],rnd,z)
+#wm_insert_greedy(real_data[1],rnd,z,2)
+test_greedy(real_data,z,rnd,2)
+test_random(real_data,z,rnd,2)
+test_opt(real_data,z,rnd,2)
+
+
 
 
