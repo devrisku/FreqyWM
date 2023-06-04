@@ -7,6 +7,8 @@ import statistics
 import secrets
 import hashlib
 import networkx as nx
+import random
+from collections import Counter
 import matplotlib.pyplot as plt
 class token:
     def __init__(self, token_name, freq):
@@ -23,7 +25,6 @@ class token:
         return f'token_name: {self.token_name} freq: {self.freq}'
     def get_name(self):
         return self.token_name
-
 class wm_token(token):
     # list_url= []
     def __init__(self, token_name, freq, lim_up, lim_down):
@@ -64,7 +65,6 @@ class wm_token(token):
             return False
         else:
             return True
-
 def read_from_pairs(filename):
     pair_file = open(filename, 'r')
     pairs=[]
@@ -76,7 +76,6 @@ def read_from_pairs(filename):
         #pairs.append(t)
     pair_file.close()
     return pairs
-
 def read_from_file(filename):
     '''
      :param filename: File is two-dimensional (e.g., url1,1800) where each attribute is separated by a comma
@@ -94,7 +93,6 @@ def read_from_file(filename):
         #list_or[line2[0]]=line2[1]
     file1.close()
     return list_or
-
 def wm_to_file(list_w,filename):
     '''
     :param list_w: watermarked histogram as a list of tokens
@@ -108,7 +106,6 @@ def wm_to_file(list_w,filename):
         sng=dn+','+fr
         output.write(sng+"\n")
     output.close()
-
 def wmpair_to_file(pairs,filename):
     '''
     :param pairs: chosen pairs for watermarking which will be stored a secret
@@ -120,7 +117,6 @@ def wmpair_to_file(pairs,filename):
         pair=str(element[0]+","+element[1])
         output.write(pair+"\n")
     output.close()
-
 def histogram_gen(filename,groupname):
     '''
     :param filename: Dataset to generate histogram from [.csv, .txt, etc.]
@@ -142,14 +138,12 @@ def histogram_gen(filename,groupname):
     #write_to_file(list_fin, 'groupby_'+groupname+filename)
     print(list_fin)
     return list_fin
-
 def key_gen(security_param):
     '''
     :param security_param: security parameter
     :return: generates a random value with the given security parameter
     '''
     return secrets.randbits(security_param)
-
 def limit_cal(list_or):
     list_wm = []
     for index, obj in enumerate(list_or):
@@ -174,25 +168,21 @@ def limit_cal(list_or):
             list_wm.append(wm_token(list_or[index].token_name, list_or[index].freq, lim_up, lim_down))
             # print("index: " + str(index))
     return list_wm
-
 def check_el(tkn, n):
     if (tkn.get_up() > np.floor(n/2)) and (tkn.get_down() > np.floor(n/2) ) and n!=0 and n!=1:
         return True
     else:
         return False
-
 def get_index(mark,tkn):
     for i in range(len(mark)):
         if  mark[i][0]==tkn:
             return mark[i][1],i
     return -1,-1
-
 def get_index_list(list,tkn):
     for i in range(len(list)):
         if list[i].get_name()==tkn:
             return list[i].get_freq(),i
     return -1,-1
-
 def cosine_simil(list_o, list_w):
     list_o_1, list_w_1 = [], []
     for i in range(len(list_o)):
@@ -201,7 +191,6 @@ def cosine_simil(list_o, list_w):
     cos_sim = dot(list_o_1, list_w_1) / (norm(list_o_1) * norm(list_w_1))
     cos_sim = cos_sim * 100
     return cos_sim
-
 def check_sim(list_o, list_w, sim):
     '''
     :param list_o: original histogram
@@ -215,7 +204,129 @@ def check_sim(list_o, list_w, sim):
         return True
     else:
         return False
+def write_to_file(list,filename):
+    output = open(filename, "w")
+    cnt = 1
+    for element in list:
+        fr = str(element)
+        output.write(fr + "\n")
+        cnt = cnt + 1
+    output.close()
+def create_data(filename):
+    file1 = open(filename, 'r')
+    list_or = []
+    # Using for loop
+    for line in file1:
+        line2 = line.split(',')
+        # print(line2[0], "", line2[1])
+        t = token(line2[0], line2[1])
+        for i in range(int(t.freq)):
+            list_or.append(t.domain_name)
+    file1.close()
+    name="sample_"+filename
+    #name="data_new_s_1_1M.txt"
+    write_to_file(list_or,name)
+def read_from_file_to_list(filename):
+    file1 = open(filename, 'r')
+    list_or = []
+    # Using for loop
+    for line in file1:
+        #line2 = line.split(',')
+        #print(line2[0], "", line2[1])
+        #t= url(line2[0], line2[1])
+        list_or.append(str(line.strip('\n')))
+       # print([t])
+        # print("xxx---",[list_or[0]])
+    file1.close()
+    #list_ow = limit_cal(list_or)
+    return list_or #, list_ow
+def create_histogram(sampledata):
+    list_hist=[]
+    counter_object = Counter(sampledata)
+    distinct_tokens=set(sampledata)
+    counts = Counter(sampledata)
+    for i in distinct_tokens:
+        tk_with_freq = token(i, int(counts[i]))
+        #print(url_with_freq)
+        list_hist.append(tk_with_freq)
+    return list_hist
+def sampling_data(percentage,file):
+    list_data=read_from_file_to_list(file)
+   # print(float(len(list_data))*percentage/100)
+    original_sample_size = float(len(list_data))
+    sample_size = original_sample_size*percentage/100
+    sample_data = random.sample(list_data, int(sample_size))
+    histogram_data = create_histogram(sample_data)
+    print("Extraction of sample with percentage:",str(percentage),"Unique urls in the subsample:",len(histogram_data)," Total subsample size: ",len(sample_data))
+    return sample_data, histogram_data, original_sample_size
+def oversampling_data(wanted_samplesize,sample):
+    oversampled_data = np.random.choice(sample, wanted_samplesize, replace=True)
+    histogram_data = create_histogram(oversampled_data)
+    print("Oversample size:", len(oversampled_data), "Size of subsample:", len(sample), "Unique urls in oversampled:",len(histogram_data))
+    return oversampled_data, histogram_data
+def remove_values_from_list(the_list, val):
+    remaining_sample = the_list
+    the_list.remove()
+    for i in range(len(val)):
+        remaining_sample = [value for value in remaining_sample if value != val[i]]
+    return remaining_sample
+def remove_token_from_hist(histogram_list, selected_to_drop):
+    remaining_sample_histogram = histogram_list
+    for i in range(len(selected_to_drop)):
+        remaining_sample_histogram.remove(selected_to_drop[i])
+    return remaining_sample_histogram
+def sampling_histogram(file,numberofdeletedtokens): #delete a number of unique tokens from the histogram
+    #list_data = read_from_file_to_list(file)
+    #histogram_list=create_histogram(list_data)
+    # list of urls
+    #unique_urls = set(list_data)
+    #selected_to_drop = random.sample(unique_urls,numberofdeletedtokens)
+    #sample_hist_data = remove_values_from_list(histogram_list,selected_to_drop)
+    #histogram_data = create_histogram(sample_data)
+    histogram_list,wm_list = read_from_file(file) # file is a histogram now
+    selected_to_drop = random.sample(histogram_list, numberofdeletedtokens)
+    print(selected_to_drop)
+    sample_hist_data = remove_token_from_hist(histogram_list, selected_to_drop)
+    return sample_hist_data
+def draw_plot_multiple(x,xname,y,yname,linename,plotname,savename):
+    """
+    !!!Make sure that the sizes of x and y are the same.
+    !!!Make sure that linename has enough number of names
+    :param x: a matrix holds x values e.g. : x = [[1, 2, 3],[1, 2, 3],[8, 12, 13]]
+    :param xname: name of the x-axis
+    :param y: a matrix holds y values e.g. : y = [[2, 4, 1],[4, 1, 3],[3, 5, 7]]
+    :param yname: name of the y-axis
+    :param linename: an array consists of the names given to each line e.g., linename=['line-1','line-2','line-3']
+    :param plotname: name of the plot
+    :param savename: name of the png file
+    :return: returns a plot with the possibility of multiple lines in one plot
+    """
+    for i in range(len(x)):
+     plt.rc('font', size=15)
+     plt.rc('font', weight='bold')
+     plt.plot(x[i], y[i], '--o', linewidth=5, label=linename[i])
+     #if i==0:
+     #    plt.plot(x[i], y[i], '--o', linewidth=5, label=linename[i], color='orange')
+     #else:
+     #    plt.plot(x[i], y[i], '--o', linewidth=5, label=linename[i], color='green')
 
+    #print(x[0])
+   # print(y[0])
+   # plt.plot(x[0], y[0], label=linename[0])
+    #plt.plot(x[1], y[1], label=linename[1])
+   # plt.plot(x[2], y[2], label=linename[2])
+    plt.xlabel(xname,fontweight='bold')
+    # naming the y axis
+    plt.ylabel(yname,fontweight='bold')
+    # giving a title to my graph
+    plt.title(plotname)
+    # show a legend on the plot
+    plt.legend(loc='lower right')
+    name=savename+'.png'
+    plt.savefig(name)
+    # function to show the plot
+    plt.show()
+    #x, np.log(x), 'g'
 ''' ***********METHODS NEEDED FOR OPTIMAL FreqyWM********'''
 def create_graph(el_items, max):
     G = nx.Graph()
@@ -335,3 +446,52 @@ def get_partition(list,rnd,part_num):
         #print("Des. location of ",list[i][0]," ",i, " -> ",r)
         part_list.append([list[i].get_name(),list[i].get_freq(),r])
     return part_list
+
+def obtwm_verify(filename,rnd,w,part_num,opt_t,condition,part_size):
+    '''
+    :param filename: name of the file we want to run the exp./verification on
+    :param rnd: the high entropy secret
+    :param w: watermark e.g. w=[0,1,1,1,0]
+    :param part_num: the number of partitions (e.g. 20)
+    :param opt_t: T* in the paper that is a threshold for minimizing the decode error.
+    :param condition: c value (e.g., 0.75)
+    :param part_size: minimum size that a partition should have (e.g. 2)
+    :return:
+    '''
+    w_det=[0 for x in range(len(w))]
+    zeros=[0 for x in range(len(w))]
+    ones=[0 for x in range(len(w))]
+    list_o=filename # Comment list_o, list_w = read_from_file(filename) and set list_o=filenam where filename is a list.
+    #Otherwise we can create another function where filename is replaced with a list
+    #list_o, list_w = read_from_file(filename)
+    list_part=get_partition(list_o,rnd,part_num)
+    for i in range(part_num):
+        part = find_partition(list_part, i)
+        if len(part) >= part_size:
+            r= i % len(w)
+            value=sigmoid_calculation(part,alpha=5,condition=0.75)
+            #print("Num Part: ",i," value: ",value,"pos: ",r)
+            if value >= opt_t:
+                ones[r]=ones[r]+1
+            else:
+                zeros[r]=zeros[r]+1
+    for i in range(len(w)):
+        if ones[i]>zeros[i]:
+            w_det[i]=1
+        elif ones[i]<zeros[i]:
+            w_det[i]=0
+        else:
+            w_det[i]=9 #9 represents x in the paper which represents erasures
+    count=0
+    #print("Watermark: ",w)
+   # print("Watermark length: ", len(w))
+    for i in range(len(w)):
+       # print("MVote: ", w_det[i])
+        if w[i]==w_det[i]:
+          #  print("MVote: ",w[i])
+            count=count+1
+    succ_rate=count/len(w)*100
+    #print("Success rate: ",succ_rate)
+    #return w_det,succ_rate
+    return succ_rate
+

@@ -36,7 +36,6 @@ def gen_alpha(item):
 def pick_random(list_w):
     x = random.randint(0, len(list_w))
     return x
-
 def perc(filename,perc):
     list_o, list_w = read_from_file(filename)
     list_temp = list_w
@@ -71,7 +70,6 @@ def perc(filename,perc):
     print("similarity: ", sim, " total changes: ", (count * 100) / len(list_w))
     # print(list_temp)
     return list_temp, sim
-
 def draw_plot_multiple(x,xname,y,yname,linename,plotname):
     """
     Make sure that the sizes of x and y are the same.
@@ -457,11 +455,51 @@ def draw_plot(x, xname, y, yname, plotname):
         # function to show the plot
         plt.show()
 
+def percentage_attack(filename,rnd,z,attack_percentage,operation=1):
+    list_o = read_from_file("wmfiles/" + filename)
+    list_w = limit_cal(list_o)
+    #list_att=[len(list_w)]
+    list_temp = list_w
+    alpha=[]
+    count=0
+    for i in range(len(list_w)):
+        up=list_temp[i].get_up()
+        down=list_temp[i].get_down()
+        freq=list_temp[i].get_freq()
+        upt_freq=(freq*attack_percentage/100)*operation
+        list_temp[i].set_freq(freq +upt_freq)
+        list_temp[i].set_lim_up(up -upt_freq)
+        list_temp[i].set_lim_down(down + upt_freq)
+        if i < (len(list_w)-1):
+          list_temp[i+1].set_lim_up(list_temp[i+1].get_up()-upt_freq)
 
+        alpha.append(upt_freq)
+    #wm_to_file(list_temp,"wmfiles/"+"cntrl_"+filename)
+   # print(list_temp)
+    sim=cosine_simil(list_o,list_temp)
+    print("------Percentage Attack-----\n")
+    print("similarity: ",sim, " total changes: ") #, (count*100)/len(list_w))
+    #print(list_temp)
+    return list_temp,sim
 
 rnd=94150602964623730173619679764343462318710907258738770672733287463602813493207
-z=1031 #131
+z=131 #1031
 budget=2
 
 percen=[10,30,50,60,80,90]
-test_percentage_total(rnd,z,percen)
+#test_percentage_total(rnd,z,percen)
+list_res,sim=percentage_attack("WM_new_s_0_5_1M.txt",rnd,z,percen[0],-1)
+pairs=read_from_pairs("wmfiles/freqy_wm_chosen_pairs_s_0_5_1M.txt")
+res,percentage=wm_verify("wmfiles/freqywm_s_0_5_1M.txt",50,0,pairs,rnd,z)
+print("FreqyWM success rate: ",percentage)
+
+#for i in range(len(percen)):
+#    list_res,sim=percentage_attack("WM_new_s_0_5_1M.txt",rnd,z,percen[i])
+
+#print("%%%%%%%%%%%%% Decreasing by a percentage %%%%%%%%%%%")
+
+for i in range(len(percen)):
+    print(" Decreasing by a percentage of ", percen[i])
+    list_res,sim=percentage_attack("WM_new_s_0_5_1M.txt",rnd,z,percen[i],-1)
+    res, percentage = wm_verify(list_res, 50, 4, pairs, rnd, z, 1)
+    print("FreqyWM success rate: ", percentage)

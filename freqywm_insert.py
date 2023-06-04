@@ -3,7 +3,7 @@ import hashlib
 import math
 import random
 
-def wm_insert_optimal(filename, rnd, prim, budget):
+def wm_insert_optimal(filename, rnd, z, budget):
     chosen_list = []
     list_o = read_from_file("wmfiles/"+filename)
     list_w = limit_cal(list_o)
@@ -13,25 +13,24 @@ def wm_insert_optimal(filename, rnd, prim, budget):
     s = []
     #rnd = secrets.randbits(256)
     #p=random.choice(primes)
-    p=prim
     for i in range(len(list_w)):
         # for i in range(20):
         # for j in range(i, len(list_w)):
         for j in range(i + 1, len(list_w)):
             # for j in range(i+1, 15):
-            msg = list_w[i].get_name() + " " + list_w[j].get_name() + " " + str(rnd)
-            hash_val = hashlib.sha256(msg.encode('utf-8')).hexdigest()
-            num_hash = int(hash_val, 16)
-
-            num = num_hash % p
-            if check_el(list_w[i], num) and check_el(list_w[j], num):  # and (num!=0 or ):
+           in_msg = list_w[i].get_name() + " " + str(rnd)
+           hash_inner = hashlib.sha256(in_msg.encode('utf-8')).hexdigest()
+           out_msg = hash_inner + " " + list_w[j].get_name()
+           hash_final = hashlib.sha256(out_msg.encode('utf-8')).hexdigest()
+           num_hash = int(hash_final, 16)
+           num = num_hash % z
+           if check_el(list_w[i], num) and check_el(list_w[j], num):  # and (num!=0 or ):
                 t = (list_w[i].get_freq() - list_w[j].get_freq()) % num
                 el_item.append([list_w[i], list_w[j], t])
 
                 s.append(t)
     if len(s)==0:
         sim = cosine_simil(list_o, list_w)
-
         return 0,0,[]
     max = np.amax(s) + 1
     G,val=create_graph(el_item,max)
@@ -58,7 +57,7 @@ def wm_insert_optimal(filename, rnd, prim, budget):
     return len(mwm_match),len(el_item), chosen_all #,100 #, rnd
     # return chosen_list,secrets
 
-def wm_insert_random(filename, rnd, prim, budget):
+def wm_insert_random(filename, rnd, z, budget):
     chosen_el = []
     list_o = read_from_file("wmfiles/"+filename)
     list_wm = limit_cal(list_o)
@@ -71,18 +70,16 @@ def wm_insert_random(filename, rnd, prim, budget):
     s = []
     mark = []
     # rnd = secrets.randbits(256)
-    # p=random.choice(primes)
-    p = prim
-    rem=np.zeros(p)
-
     for i in range(len(list_wm)):
 
         mark.append([list_wm[i].get_name(), 0])
         for j in range(i + 1, len(list_wm)):
-            msg = list_wm[i].get_name() + " " + list_wm[j].get_name() + " " + str(rnd)
-            hash_val = hashlib.sha256(msg.encode('utf-8')).hexdigest()
-            num_hash = int(hash_val, 16)
-            num = num_hash % p
+            in_msg = list_w[i].get_name() + " " + str(rnd)
+            hash_inner = hashlib.sha256(in_msg.encode('utf-8')).hexdigest()
+            out_msg = hash_inner + " " + list_w[j].get_name()
+            hash_final = hashlib.sha256(out_msg.encode('utf-8')).hexdigest()
+            num_hash = int(hash_final, 16)
+            num = num_hash % z
 
             if check_el(list_wm[i], num) and check_el(list_wm[j], num) :
                 t = (list_wm[i].get_freq() - list_wm[j].get_freq()) % num
@@ -131,9 +128,11 @@ def wm_insert_greedy(filename, rnd, z, budget):
     for i in range(len(list_w)):
         mark.append([list_w[i].get_name(), 0])
         for j in range(i + 1, len(list_w)):
-            msg = list_w[i].get_name() + " " + list_w[j].get_name() + " " + str(rnd)
-            hash_val = hashlib.sha256(msg.encode('utf-8')).hexdigest()
-            num_hash = int(hash_val, 16)
+            in_msg = list_w[i].get_name() + " " + str(rnd)
+            hash_inner = hashlib.sha256(in_msg.encode('utf-8')).hexdigest()
+            out_msg = hash_inner + " " + list_w[j].get_name()
+            hash_final = hashlib.sha256(out_msg.encode('utf-8')).hexdigest()
+            num_hash = int(hash_final, 16)
             num = num_hash % z
             if check_el(list_w[i], num) and check_el(list_w[j], num)  :
                 t = (list_w[i].get_freq() - list_w[j].get_freq()) % num
