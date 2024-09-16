@@ -162,7 +162,7 @@ def wm_insert_greedy(filename, rnd, z, budget):
     sim = cosine_simil(list_o, list_w)
     name=filename.split('.')
     wm_to_file(list_w,"wmfiles/"+name[0]+'_greedy.txt')
-   # wmpair_to_file(chosen_el,name[0]+'_greedy_pairs.txt')
+    wmpair_to_file(chosen_el,"wmfiles/"+name[0]+'_greedy_pairs.txt')
     print("-----FreqyWM Greedy-----")
     print('Eligible # of pairs: ', len(el_item))
     print('Chosen # of pairs   : ', len(chosen_el))

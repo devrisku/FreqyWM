@@ -455,7 +455,7 @@ def draw_plot(x, xname, y, yname, plotname):
         # function to show the plot
         plt.show()
 
-def percentage_attack(filename,rnd,z,attack_percentage,operation=1):
+def percentage_attack(filename,attack_percentage,operation=1):
     list_o = read_from_file("wmfiles/" + filename)
     list_w = limit_cal(list_o)
     #list_att=[len(list_w)]
@@ -475,7 +475,7 @@ def percentage_attack(filename,rnd,z,attack_percentage,operation=1):
 
         alpha.append(upt_freq)
     #wm_to_file(list_temp,"wmfiles/"+"cntrl_"+filename)
-   # print(list_temp)
+    #print(list_temp)
     sim=cosine_simil(list_o,list_temp)
     print("------Percentage Attack-----\n")
     print("similarity: ",sim, " total changes: ") #, (count*100)/len(list_w))
@@ -500,6 +500,6 @@ print("FreqyWM success rate: ",percentage)
 
 for i in range(len(percen)):
     print(" Decreasing by a percentage of ", percen[i])
-    list_res,sim=percentage_attack("WM_new_s_0_5_1M.txt",rnd,z,percen[i],-1)
+    list_res,sim=percentage_attack("WM_new_s_0_5_1M.txt",percen[i],-1)
     res, percentage = wm_verify(list_res, 50, 4, pairs, rnd, z, 1)
     print("FreqyWM success rate: ", percentage)

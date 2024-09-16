@@ -495,3 +495,37 @@ def obtwm_verify(filename,rnd,w,part_num,opt_t,condition,part_size):
     #return w_det,succ_rate
     return succ_rate
 
+def create_plot(list_wm, name_1, list_original, name_2):
+  """
+  Creates a plot with one line showing list_wm and the other as a bar chart for list_original.
+
+  Args:
+    list_wm: A list of lists, where each inner list contains [url, frequency].
+    list_original: A list of lists, where each inner list contains [url, frequency].
+  """
+  frequencies_wm=[]
+  urls_wm=[]
+  frequencies_original=[]
+  urls_original=[]
+  for i in range(len(list_wm)):
+        frequencies_wm.append(list_wm[i].get_freq())
+        urls_wm.append(list_wm[i].get_name())
+  for i in range(len(list_original)):
+        frequencies_original.append(list_original[i].get_freq())
+        urls_original.append(list_original[i].get_name())
+  #urls_wm = [item[0] for item in list_wm]
+  #frequencies_wm = [item[1] for item in list_wm]
+
+  #urls_original = [item[0] for item in list_original]
+  #frequencies_original = [item[1] for item in list_original]
+  #plt.figure(figsize=(10,6))
+  plt.plot(urls_wm, frequencies_wm, label=name_1)
+  plt.plot(urls_original, frequencies_original, label=name_2) #, alpha=0.5)
+  plt.xlabel('URLs')
+  plt.ylabel('Frequencies')
+  plt.title('Comparison of Frequencies')
+  plt.legend()
+  plt.xticks(rotation=45)  # Rotate x-axis labels for better readability if needed
+  plt.tight_layout()  # Adjust layout to prevent labels from overlapping
+  #plt.setp(ax.get_xticklabels(), rotation=30, horizontalalignment='right', fontsize='x-small')
+  plt.show()
